@@ -1,11 +1,22 @@
 //#include "softmax.h"
 #define SIZE 8
 
-void IntSoftmax(int m1[SIZE], int m2[SIZE], int sftmx[SIZE]) {
+void IntSoftmax(int m1[SIZE], int sftmx[SIZE], int scaling_factor) {
     float coef[3] = [0.35815147, 0.96963238, 1.]; //[a, b, c] --> ax^2 + bx + c
-    float x0 = -0.6931 // ln2
-    
+    float x0 = -0.6931; // ln2
+    for (int i = 0; i < SIZE; i++) {
+        int b_int = coef[1] / scaling_factor;
+        int c_int = coef[2] / (scaling_factor * scaling_factor);
+        int z = m1[i] + b_int;
+        z = m1[i] * z;
+        z = z + c_int;
+        scaling_factor = coef[0] * scaling_factor * scaling_factor;
+        sftmx[i] = z;
+    }
+
 }
+
+/*
 class IntSoftmax(Module):
     """
     Class to quantize given Softmax layer
@@ -88,3 +99,4 @@ class IntSoftmax(Module):
         exp_int = floor_ste.apply(exp_int * factor / 2 ** (32 - self.output_bit))
         scaling_factor = 1 / 2 ** self.output_bit
         return exp_int * scaling_factor, scaling_factor
+*/
